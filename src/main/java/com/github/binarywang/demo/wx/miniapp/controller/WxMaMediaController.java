@@ -85,4 +85,24 @@ public class WxMaMediaController {
         WxMaConfigHolder.remove();//清理ThreadLocal
         return media;
     }
+
+
+    /**
+     * 根据 mediaID 下载高质量媒体文件。
+     *
+     * @param appid   小程序的唯一标识
+     * @param mediaID 媒体文件的唯一标识
+     * @return File   返回对应的媒体文件
+     * @throws WxErrorException 如果在下载媒体文件时出现错误则抛出异常
+     */
+    @GetMapping("/download/high_quality/{appid}/{mediaID}")
+    public File getHigh(@PathVariable String appid, @PathVariable String mediaID) throws WxErrorException {
+        if (!wxMaService.switchover(appid)) {
+            throw new IllegalArgumentException(String.format("未找到对应appid=[%s]的配置，请核实！", appid));
+        }
+        File mediaFile = wxMaService.getMediaService().getMedia(mediaID);
+        WxMaConfigHolder.remove();
+        return mediaFile;
+    }
+
 }
